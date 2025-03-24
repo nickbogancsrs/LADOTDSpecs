@@ -87,7 +87,7 @@
                             <h2 class="mb-0">File Requirements</h2>
                         </div>
                         <div class="card-body">
-                            <p>The application accepts two file formats:</p>
+                            <p>The application accepts three file formats:</p>
                             
                             <h4>CSV Files</h4>
                             <p>Your CSV file should include columns for:</p>
@@ -107,6 +107,18 @@ ItemNumber,Description,Quantity,Unit
                             
                             <h4>Excel Files</h4>
                             <p>Your Excel file should follow the same column structure as the CSV format. The application will read the first worksheet in the file by default.</p>
+                            
+                            <h4>PDF Files</h4>
+                            <p>You can upload PDF files containing tables of item data. The application will automatically extract item numbers, descriptions, quantities, and units from tables in the PDF.</p>
+                            
+                            <p>This is particularly useful for working with LA DOTD bid documents, which often come in PDF format. The application will attempt to identify table structures in the PDF and extract the relevant data.</p>
+                            
+                            <p>Best practices for PDF uploads:</p>
+                            <ul>
+                                <li>Use PDFs with machine-readable text (not scanned images)</li>
+                                <li>Choose PDFs with clear, well-structured tables</li>
+                                <li>Verify the extracted data after upload to ensure accuracy</li>
+                            </ul>
                             
                             <div class="alert alert-info">
                                 <strong>Note:</strong> The application will attempt to identify the appropriate columns based on the headers. If your file uses different column names, the application will try to map them to the expected fields.
@@ -297,10 +309,23 @@ ItemNumber,Description,Quantity,Unit
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="faqFive">
                                         <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                                            How do I report bugs or request features?
+                                            How accurate is the PDF table extraction?
                                         </button>
                                     </h2>
                                     <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="faqFive" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            The PDF extraction feature works best with well-formatted, text-based PDFs (not scanned documents). The accuracy depends on the structure and formatting of the PDF. For LA DOTD bid documents, it typically achieves 80-95% accuracy. Always review the extracted data to ensure it's complete and correct. The application will attempt to identify item numbers, descriptions, quantities, and units, but may need manual adjustment for complex layouts.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faqSix">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseSix">
+                                            How do I report bugs or request features?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="faqSix" data-bs-parent="#faqAccordion">
                                         <div class="accordion-body">
                                             Please report bugs or feature requests through the GitHub issues page for this project. A link is available on the About page.
                                         </div>

@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle file processing when the user clicks "Process File"
     async function handleFileProcessing() {
-        // Get selected file type
+                    // Get selected file type
         let fileType = 'csv'; // Default
         for (const radio of fileTypeRadios) {
             if (radio.checked) {
@@ -64,8 +64,10 @@ document.addEventListener('DOMContentLoaded', () => {
             // Parse the file based on its type
             if (fileType === 'csv') {
                 processedItems = await FileHandler.parseCSV(file);
-            } else {
+            } else if (fileType === 'excel') {
                 processedItems = await FileHandler.parseExcel(file);
+            } else if (fileType === 'pdf') {
+                processedItems = await PDFHandler.parsePDF(file);
             }
 
             // Match items with specifications

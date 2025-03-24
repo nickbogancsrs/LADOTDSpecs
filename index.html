@@ -12,6 +12,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <script>
+        // Configure PDF.js worker path
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    </script>
 </head>
 <body>
     <!-- Navigation Bar -->
@@ -58,8 +63,8 @@
                     <div class="card-body">
                         <form id="uploadForm">
                             <div class="mb-3">
-                                <label for="fileUpload" class="form-label">Select your CSV or Excel file</label>
-                                <input class="form-control" type="file" id="fileUpload" accept=".csv,.xlsx,.xls">
+                                <label for="fileUpload" class="form-label">Select your file</label>
+                                <input class="form-control" type="file" id="fileUpload" accept=".csv,.xlsx,.xls,.pdf">
                                 <div class="form-text">File should contain item numbers, descriptions, and quantities.</div>
                             </div>
                             <div class="mb-3">
@@ -71,6 +76,10 @@
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="fileType" id="excelType" value="excel">
                                     <label class="form-check-label" for="excelType">Excel</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="fileType" id="pdfType" value="pdf">
+                                    <label class="form-check-label" for="pdfType">PDF</label>
                                 </div>
                             </div>
                             <div class="d-grid">
@@ -140,6 +149,7 @@
     <!-- Application Scripts -->
     <script src="assets/js/utils.js"></script>
     <script src="assets/js/fileHandler.js"></script>
+    <script src="assets/js/pdfHandler.js"></script>
     <script src="assets/js/specificationMatcher.js"></script>
     <script src="assets/js/pdfGenerator.js"></script>
     <script src="assets/js/app.js"></script>
