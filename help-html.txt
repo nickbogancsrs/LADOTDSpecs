@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help - LA DOTD Specification Manager</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">LA DOTD Specification Manager</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="help.html">Help</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-12 mb-5">
+                <h1 class="text-center">Help & Documentation</h1>
+                <p class="lead text-center">Learn how to use the LA DOTD Specification Manager</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-3 mb-4">
+                <!-- Table of Contents -->
+                <div class="list-group sticky-top" style="top: 20px;">
+                    <a href="#overview" class="list-group-item list-group-item-action">Overview</a>
+                    <a href="#file-requirements" class="list-group-item list-group-item-action">File Requirements</a>
+                    <a href="#uploading-files" class="list-group-item list-group-item-action">Uploading Files</a>
+                    <a href="#processing-files" class="list-group-item list-group-item-action">Processing Files</a>
+                    <a href="#downloading-specs" class="list-group-item list-group-item-action">Downloading Specifications</a>
+                    <a href="#troubleshooting" class="list-group-item list-group-item-action">Troubleshooting</a>
+                    <a href="#faq" class="list-group-item list-group-item-action">FAQ</a>
+                </div>
+            </div>
+
+            <div class="col-lg-9">
+                <!-- Overview Section -->
+                <section id="overview" class="mb-5">
+                    <div class="card shadow">
+                        <div class="card-header bg-light">
+                            <h2 class="mb-0">Overview</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>The LA DOTD Specification Manager is a web-based tool designed to help you quickly retrieve the technical specifications you need for your construction projects. Simply upload a list of item numbers, and the system will match them with the appropriate specifications from the LA DOTD Standard Specifications for Roads and Bridges manual.</p>
+                            
+                            <p>Key features:</p>
+                            <ul>
+                                <li>Upload estimated items lists in CSV or Excel format</li>
+                                <li>Automatic matching of item numbers to specifications</li>
+                                <li>Identification of supplemental specifications referenced in primary specs</li>
+                                <li>Generation of a comprehensive PDF containing all relevant specifications</li>
+                                <li>Table of contents for easy navigation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- File Requirements Section -->
+                <section id="file-requirements" class="mb-5">
+                    <div class="card shadow">
+                        <div class="card-header bg-light">
+                            <h2 class="mb-0">File Requirements</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>The application accepts two file formats:</p>
+                            
+                            <h4>CSV Files</h4>
+                            <p>Your CSV file should include columns for:</p>
+                            <ul>
+                                <li><strong>Item Number</strong> - The LA DOTD item number (e.g., "203-01", "502-01")</li>
+                                <li><strong>Description</strong> (optional) - Description of the item</li>
+                                <li><strong>Quantity</strong> (optional) - Quantity of the item</li>
+                                <li><strong>Unit</strong> (optional) - Unit of measure</li>
+                            </ul>
+                            
+                            <p>Example CSV format:</p>
+                            <pre class="bg-light p-3">
+ItemNumber,Description,Quantity,Unit
+203-01,General Excavation,1000,CY
+502-01,Asphalt Concrete,500,TON
+701-01,18" Cross Drain Pipe,200,LF</pre>
+                            
+                            <h4>Excel Files</h4>
+                            <p>Your Excel file should follow the same column structure as the CSV format. The application will read the first worksheet in the file by default.</p>
+                            
+                            <div class="alert alert-info">
+                                <strong>Note:</strong> The application will attempt to identify the appropriate columns based on the headers. If your file uses different column names, the application will try to map them to the expected fields.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Uploading Files Section -->
+                <section id="uploading-files" class="mb-5">
+                    <div class="card shadow">
+                        <div class="card-header bg-light">
+                            <h2 class="mb-0">Uploading Files</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>To upload your estimated items list:</p>
+                            
+                            <ol>
+                                <li>Click the "Choose File" button in the Upload section</li>
+                                <li>Select your CSV or Excel file from your computer</li>
+                                <li>Select the appropriate file type (CSV or Excel) using the radio buttons</li>
+                                <li>Click the "Process File" button to upload and process your file</li>
+                            </ol>
+                            
+                            <div class="alert alert-warning">
+                                <strong>File Size Limit:</strong> The maximum file size is 5MB. If your file is larger, consider splitting it into smaller files or removing unnecessary columns.
+                            </div>
+                            
+                            <p>Once your file is uploaded, the application will begin processing it automatically.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Processing Files Section -->
+                <section id="processing-files" class="mb-5">
+                    <div class="card shadow">
+                        <div class="card-header bg-light">
+                            <h2 class="mb-0">Processing Files</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>After uploading your file, the application will:</p>
+                            
+                            <ol>
+                                <li>Parse the file to extract item numbers and related information</li>
+                                <li>Match each item number to the corresponding technical specification</li>
+                                <li>Identify any supplemental specifications referenced in the primary specs</li>
+                                <li>Display the results in a table showing each item and its specification reference</li>
+                            </ol>
+                            
+                            <p>The results table will show:</p>
+                            <ul>
+                                <li>Item Number</li>
+                                <li>Description</li>
+                                <li>Quantity</li>
+                                <li>Unit</li>
+                                <li>Specification Reference</li>
+                            </ul>
+                            
+                            <div class="alert alert-info">
+                                <strong>Note:</strong> If an item number cannot be matched to a specification, the reference will show "No specification found". This may happen if the item number is not in the standard format or if it refers to a special provision not included in the standard specifications.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Downloading Specifications Section -->
+                <section id="downloading-specs" class="mb-5">
+                    <div class="card shadow">
+                        <div class="card-header bg-light">
+                            <h2 class="mb-0">Downloading Specifications</h2>
+                        </div>
+                        <div class="card-body">
+                            <p>Once your file has been processed, you can download a PDF containing all the relevant specifications:</p>
+                            
+                            <ol>
+                                <li>Review the results table to ensure all items were properly matched</li>
+                                <li>Click the "Download Specifications" button</li>
+                                <li>Save the generated PDF to your preferred location</li>
+                            </ol>
+                            
+                            <p>The generated PDF will include:</p>
+                            <ul>
+                                <li>A cover page with the title and date</li>
+                                <li>A table showing the items from your upload</li>
+                                <li>A table of contents listing all included specifications</li>
+                                <li>The full text of each specification, organized by section</li>
+                                <li>Any supplemental specifications that are referenced</li>
+                            </ul>
+                            
+                            <div class="alert alert-success">
+                                <strong>Tip:</strong> The PDF includes bookmarks for easy navigation. Use your PDF viewer's bookmark feature to quickly jump to specific sections.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Troubleshooting Section -->
+                <section id="troubleshooting" class="mb-5">
+                    <div class="card shadow">
+                        <div class="card-header bg-light">
+                            <h2 class="mb-0">Troubleshooting</h2>
+                        </div>
+                        <div class="card-body">
+                            <h4>File Upload Issues</h4>
+                            <ul>
+                                <li><strong>File not uploading:</strong> Ensure your file is under the 5MB size limit and is in CSV or Excel format.</li>
+                                <li><strong>Format errors:</strong> Check that your file has the required columns and that the data is properly formatted.</li>
+                                <li><strong>Browser compatibility:</strong> This application works best with Chrome, Firefox, Safari, or Edge. If you're having issues, try a different browser.</li>
+                            </ul>
+                            
+                            <h4>Processing Issues</h4>
+                            <ul>
+                                <li><strong>Items not matched:</strong> Verify that your item numbers follow the LA DOTD format (e.g., "203-01"). The application can handle some variations, but the basic format should be maintained.</li>
+                                <li><strong>Missing specifications:</strong> The application includes specifications from the 2016 LA DOTD Standard Specifications for Roads and Bridges manual. If your project uses special provisions or updated specifications, they may not be included.</li>
+                                <li><strong>Processing timeout:</strong> For very large files, processing may take longer. If the application seems unresponsive, try with a smaller subset of items.</li>
+                            </ul>
+                            
+                            <h4>PDF Generation Issues</h4>
+                            <ul>
+                                <li><strong>PDF not downloading:</strong> Ensure your browser allows downloads and pop-ups from this site.</li>
+                                <li><strong>Incomplete PDF:</strong> If your PDF seems incomplete, it may be due to a large number of specifications. Try processing fewer items at once.</li>
+                                <li><strong>Formatting issues:</strong> If the PDF formatting appears incorrect, please try a different PDF viewer.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FAQ Section -->
+                <section id="faq" class="mb-5">
+                    <div class="card shadow">
+                        <div class="card-header bg-light">
+                            <h2 class="mb-0">Frequently Asked Questions</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="accordion" id="faqAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faqOne">
+                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                            Is this an official LA DOTD application?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="faqOne" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            No, this is not an official LA DOTD application. It is an independent tool designed to help contractors and engineers work with LA DOTD specifications. Always verify the specifications with the official LA DOTD documents for your project.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faqTwo">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                            How current are the specifications in this application?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="faqTwo" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            The application currently includes specifications from the 2016 LA DOTD Standard Specifications for Roads and Bridges manual. Updates to the specifications will be incorporated as they become available.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faqThree">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                            Can I export the results to other formats besides PDF?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="faqThree" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            Currently, the application only supports PDF export. Future updates may include additional export formats such as Word or HTML.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faqFour">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                            Does this application work offline?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="faqFour" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            No, an internet connection is required to use this application as it runs in your web browser. However, once the specifications are downloaded as a PDF, you can access them offline.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="faqFive">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                                            How do I report bugs or request features?
+                                        </button>
+                                    </h2>
+                                    <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="faqFive" data-bs-parent="#faqAccordion">
+                                        <div class="accordion-body">
+                                            Please report bugs or feature requests through the GitHub issues page for this project. A link is available on the About page.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">LA DOTD Specification Manager &copy; 2025</p>
+            <p class="small text-muted">
+                This is an unofficial tool and is not affiliated with or endorsed by the Louisiana Department of Transportation and Development.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+# LA DOTD Specification Manager - Project Structure
+
+## Directory Structure
+```
+la-dotd-spec-manager/
+├── assets/
+│   ├── css/
+│   │   └── styles.css
+│   ├── js/
+│   │   ├── app.js
+│   │   ├── fileHandler.js
+│   │   ├── specificationMatcher.js
+│   │   ├── pdfGenerator.js
+│   │   └── utils.js
+│   ├── img/
+│   └── data/
+│       ├── specifications.json
+│       └── supplementalSpecs.json
+├── index.html
+├── about.html
+├── help.html
+└── README.md
+```
+
+## Core Technologies
+- HTML5, CSS3, JavaScript (ES6+)
+- Bootstrap 5 for responsive UI
+- PapaParse for CSV parsing
+- SheetJS for Excel parsing
+- jsPDF for PDF generation
+
+## Development Workflow
+1. Develop locally
+2. Use GitHub Actions for automated deployment
+3. Host on GitHub Pages

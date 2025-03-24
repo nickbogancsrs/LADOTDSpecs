@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - LA DOTD Specification Manager</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">LA DOTD Specification Manager</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" 
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" 
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="about.html">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="help.html">Help</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-lg-12 mb-5">
+                <h1 class="text-center">About LA DOTD Specification Manager</h1>
+                <p class="lead text-center">A tool to simplify accessing LA DOTD technical specifications</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <div class="card shadow mb-5">
+                    <div class="card-header bg-light">
+                        <h2 class="mb-0">Project Overview</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>The LA DOTD Specification Manager is a web-based application designed to help contractors, engineers, and project managers easily access the technical specifications they need for Louisiana Department of Transportation and Development (LA DOTD) construction projects.</p>
+                        
+                        <p>Working with LA DOTD specifications often requires navigating through hundreds of pages of the Standard Specifications for Roads and Bridges manual to find the relevant sections for your project items. This application streamlines that process by allowing you to upload your estimated items list and automatically generating a custom PDF with just the specifications you need.</p>
+                        
+                        <p>Key benefits include:</p>
+                        <ul>
+                            <li>Significant time savings in researching specifications</li>
+                            <li>Reduced risk of missing important specification details</li>
+                            <li>Easy identification of supplemental specifications</li>
+                            <li>Creation of a project-specific specifications document</li>
+                            <li>Simple, browser-based interface with no installation required</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-5">
+                    <div class="card-header bg-light">
+                        <h2 class="mb-0">Technical Details</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>This application is built using modern web technologies and can run in any modern web browser without requiring installation or special plugins.</p>
+                        
+                        <h4>Technology Stack</h4>
+                        <ul>
+                            <li><strong>Frontend:</strong> HTML5, CSS3, JavaScript (ES6+)</li>
+                            <li><strong>Styling:</strong> Bootstrap 5</li>
+                            <li><strong>File Parsing:</strong> PapaParse (CSV), SheetJS (Excel)</li>
+                            <li><strong>PDF Generation:</strong> jsPDF</li>
+                            <li><strong>Hosting:</strong> GitHub Pages</li>
+                        </ul>
+                        
+                        <h4>Data Sources</h4>
+                        <p>The specification data used in this application is based on the 2016 LA DOTD Standard Specifications for Roads and Bridges manual. The data has been converted into a structured format to enable programmatic access and searching.</p>
+                        
+                        <h4>Client-Side Processing</h4>
+                        <p>All processing occurs on your local device (client-side), meaning:</p>
+                        <ul>
+                            <li>Your data never leaves your browser</li>
+                            <li>No server processing or storage of your files</li>
+                            <li>Complete privacy for your project information</li>
+                            <li>The ability to use the application without an internet connection once loaded</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-5">
+                    <div class="card-header bg-light">
+                        <h2 class="mb-0">Legal Information</h2>
+                    </div>
+                    <div class="card-body">
+                        <h4>Disclaimer</h4>
+                        <p>This is an unofficial tool and is not affiliated with or endorsed by the Louisiana Department of Transportation and Development. While we strive to provide accurate information, always verify specifications with the official LA DOTD documents for your project.</p>
+                        
+                        <h4>Open Source</h4>
+                        <p>This application is open source software released under the MIT License. You are free to use, modify, and distribute it according to the terms of that license.</p>
+                        
+                        <div class="d-grid gap-2 col-6 mx-auto mt-4">
+                            <a href="https://github.com/yourusername/la-dotd-spec-manager" class="btn btn-outline-primary" target="_blank">
+                                <i class="bi bi-github"></i> View on GitHub
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow">
+                    <div class="card-header bg-light">
+                        <h2 class="mb-0">Contact & Feedback</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>We welcome your feedback on how to improve this tool. If you encounter any issues or have suggestions for enhancements, please let us know through one of the following channels:</p>
+                        
+                        <ul>
+                            <li>Submit an issue on the <a href="https://github.com/yourusername/la-dotd-spec-manager/issues" target="_blank">GitHub repository</a></li>
+                            <li>Send an email to <a href="mailto:contact@example.com">contact@example.com</a></li>
+                        </ul>
+                        
+                        <p>If you find this tool useful, please consider:</p>
+                        <ul>
+                            <li>Sharing it with colleagues</li>
+                            <li>Giving it a star on GitHub</li>
+                            <li>Contributing to its development</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">LA DOTD Specification Manager &copy; 2025</p>
+            <p class="small text-muted">
+                This is an unofficial tool and is not affiliated with or endorsed by the Louisiana Department of Transportation and Development.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
