@@ -1,5 +1,5 @@
 /**
- * LA DOTD Specification Manager - PDF Generator Module
+ * Specification Manager - PDF Generator Module
  * 
  * This module handles generating PDF documents with compiled specifications
  * based on the items and their matched specifications.
@@ -29,6 +29,10 @@ const PDFGenerator = (() => {
                 // Get specifications content
                 const specs = await SpecificationMatcher.getFullSpecifications(matches);
                 
+                // Get the current specification set name
+                const currentSpecSet = SpecificationMatcher.getCurrentSpecSet();
+                const specSetName = getSpecSetDisplayName(currentSpecSet);
+                
                 // Create new PDF document
                 const { jsPDF } = jspdf;
                 const doc = new jsPDF({
@@ -39,10 +43,10 @@ const PDFGenerator = (() => {
 
                 // Add metadata
                 doc.setProperties({
-                    title: 'LA DOTD Technical Specifications',
+                    title: `${specSetName} Technical Specifications`,
                     subject: 'Compiled technical specifications for project items',
-                    author: 'LA DOTD Specification Manager',
-                    creator: 'LA DOTD Specification Manager'
+                    author: 'Specification Manager',
+                    creator: 'Specification Manager'
                 });
 
                 // Start adding content
@@ -51,7 +55,7 @@ const PDFGenerator = (() => {
                 // Add title
                 doc.setFontSize(18);
                 doc.setFont('helvetica', 'bold');
-                doc.text('LA DOTD Technical Specifications', PAGE_WIDTH / 2, y, { align: 'center' });
+                doc.text(`${specSetName} Technical Specifications`, PAGE_WIDTH / 2, y, { align: 'center' });
                 y += 10;
 
                 // Add date
@@ -92,7 +96,8 @@ const PDFGenerator = (() => {
                 }
 
                 // Generate and download the PDF
-                doc.save('LA_DOTD_Specifications.pdf');
+                const fileName = `${specSetName.replace(/\s+/g, '_')}_Specifications.pdf`;
+                doc.save(fileName);
                 resolve();
             } catch (error) {
                 console.error('Error generating PDF:', error);
@@ -380,6 +385,20 @@ const PDFGenerator = (() => {
             return text;
         }
         return text.substring(0, maxLength - 3) + '...';
+    };
+
+    /**
+     * Get display name for a specification set ID
+     * @param {string} specSetId - The specification set ID
+     * @returns {string} - The display name for the specification set
+     */
+    const getSpecSetDisplayName = (specSetId) => {
+        const specSetNames = {
+            'ladotd-2016': 'LA DOTD 2016',
+            'txdot-2024': 'TxDOT 2024'
+        };
+        
+        return specSetNames[specSetId] || 'Standard';
     };
 
     // Return public methods

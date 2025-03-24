@@ -1,8 +1,8 @@
 /**
- * LA DOTD Specification Manager - Specification Matcher Module
+ * Specification Manager - Specification Matcher Module
  * 
  * This module handles matching item numbers to their corresponding
- * technical specifications in the LA DOTD Standard Specifications.
+ * technical specifications from different specification sets.
  */
 
 const SpecificationMatcher = (() => {
@@ -10,6 +10,48 @@ const SpecificationMatcher = (() => {
     let specifications = [];
     let supplementalSpecs = [];
     let isInitialized = false;
+    let currentSpecSet = 'ladotd-2016'; // Default specification set
+    let specSets = {
+        'ladotd-2016': {
+            name: 'LA DOTD 2016 Standard Specifications',
+            path: 'assets/specs/ladotd-2016/',
+            itemNumberPatterns: [
+                /^\d{3}-\d{2}(-\d{5})?$/,  // 203-01, 701-01-00100 format
+                /^\d{3}-\d{2}-\d{2}$/,     // 203-01-00 format
+                /^\d{3}-\d{2}-\d{4}$/,     // 203-01-0000 format
+                /^\d{3}-\d{2}$/            // 203-01 format - most common
+            ]
+        },
+        'txdot-2024': {
+            name: 'TxDOT 2024 Standard Specifications',
+            path: 'assets/specs/txdot-2024/',
+            itemNumberPatterns: [
+                /^\d{3}$/,              // 100, 200, 300 format (TxDOT uses 3-digit item numbers)
+                /^\d{3}\.\d{1,3}$/,     // 100.1, 200.10 format (TxDOT uses decimal subitems)
+                /^\d{4}$/               // 1000, 2000 format (some TxDOT special items)
+            ]
+        }
+    };
+
+    /**
+     * Set the current specification set
+     * @param {string} specSet - The specification set ID to use
+     * @returns {boolean} - True if successful, false if the set doesn't exist
+     */
+    const setSpecSet = (specSet) => {
+        if (!specSets[specSet]) {
+            console.error(`Specification set "${specSet}" not found`);
+            return false;
+        }
+        
+        if (currentSpecSet !== specSet) {
+            currentSpecSet = specSet;
+            isInitialized = false; // Force reinitialization with new spec set
+            console.log(`Specification set changed to ${specSets[specSet].name}`);
+        }
+        
+        return true;
+    };
 
     /**
      * Initialize the module by loading specification data
@@ -17,17 +59,20 @@ const SpecificationMatcher = (() => {
      */
     const init = async () => {
         try {
+            const specPath = specSets[currentSpecSet].path;
+            console.log(`Loading specifications from ${specPath}`);
+            
             // Load main specification data
-            specifications = await loadJSON('assets/data/specifications.json');
+            specifications = await loadJSON(`${specPath}specifications.json`);
             
             // Load supplemental specification data
-            supplementalSpecs = await loadJSON('assets/data/supplementalSpecs.json');
+            supplementalSpecs = await loadJSON(`${specPath}supplementalSpecs.json`);
             
             isInitialized = true;
             return true;
         } catch (error) {
             console.error('Failed to initialize SpecificationMatcher:', error);
-            throw new Error('Failed to load specification data');
+            throw new Error(`Failed to load specification data from ${specSets[currentSpecSet].path}`);
         }
     };
 
@@ -81,10 +126,28 @@ const SpecificationMatcher = (() => {
         // Try to find an exact match first
         let spec = specifications.find(s => s.itemNumber === cleanItemNumber);
         
-        // If no exact match, try a prefix match
-        if (!spec && cleanItemNumber.length >= 3) {
-            const prefix = cleanItemNumber.substring(0, 3);
-            spec = specifications.find(s => s.itemNumber.startsWith(prefix));
+        // If no exact match, try a prefix match based on the current spec set format
+        if (!spec) {
+            const patterns = specSets[currentSpecSet].itemNumberPatterns;
+            
+            // Try each pattern to see if it matches the item number format
+            for (const pattern of patterns) {
+                if (pattern.test(cleanItemNumber)) {
+                    // For LA DOTD format, try prefix matching on first 3 digits
+                    if (currentSpecSet === 'ladotd-2016' && cleanItemNumber.length >= 3) {
+                        const prefix = cleanItemNumber.substring(0, 3);
+                        spec = specifications.find(s => s.itemNumber.startsWith(prefix));
+                        if (spec) break;
+                    }
+                    
+                    // For TxDOT format, try exact matching on main item number
+                    if (currentSpecSet === 'txdot-2024') {
+                        const mainItemNumber = cleanItemNumber.split('.')[0];
+                        spec = specifications.find(s => s.itemNumber === mainItemNumber);
+                        if (spec) break;
+                    }
+                }
+            }
         }
 
         // If still no match, return default
@@ -181,10 +244,32 @@ const SpecificationMatcher = (() => {
         };
     };
 
+    /**
+     * Get information about available specification sets
+     * @returns {Object} - Object containing specification set information
+     */
+    const getAvailableSpecSets = () => {
+        return Object.keys(specSets).map(key => ({
+            id: key,
+            name: specSets[key].name
+        }));
+    };
+
+    /**
+     * Get the current specification set ID
+     * @returns {string} - The current specification set ID
+     */
+    const getCurrentSpecSet = () => {
+        return currentSpecSet;
+    };
+
     // Return public methods
     return {
         init,
         matchItems,
-        getFullSpecifications
+        getFullSpecifications,
+        setSpecSet,
+        getAvailableSpecSets,
+        getCurrentSpecSet
     };
 })();
