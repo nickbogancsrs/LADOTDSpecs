@@ -20,39 +20,58 @@ const PDFHandler = (() => {
                     return;
                 }
 
+                // Show console debug message
+                console.log('Starting PDF parsing process');
+                
                 const reader = new FileReader();
                 
                 reader.onload = async (event) => {
                     try {
                         const typedArray = new Uint8Array(event.target.result);
+                        console.log('File loaded as array buffer, size:', typedArray.length);
                         
                         // Load the PDF document
                         const loadingTask = pdfjsLib.getDocument({ data: typedArray });
-                        const pdf = await loadingTask.promise;
+                        console.log('PDF loading task created');
                         
-                        console.log('PDF loaded, pages:', pdf.numPages);
+                        loadingTask.onProgress = (progress) => {
+                            console.log(`PDF loading progress: ${progress.loaded}/${progress.total}`);
+                        };
                         
-                        // Extract data from all pages
-                        const extractedItems = await extractTablesFromPDF(pdf);
-                        
-                        // Process extracted items into the standard format
-                        const processedItems = processItemsData(extractedItems);
-                        
-                        resolve(processedItems);
+                        try {
+                            const pdf = await loadingTask.promise;
+                            console.log('PDF loaded successfully, pages:', pdf.numPages);
+                            
+                            // Extract data from all pages
+                            const extractedItems = await extractTablesFromPDF(pdf);
+                            console.log('Extracted items from PDF:', extractedItems);
+                            
+                            // Process extracted items into the standard format
+                            const processedItems = processItemsData(extractedItems);
+                            console.log('Processed items:', processedItems);
+                            
+                            resolve(processedItems);
+                        } catch (pdfError) {
+                            console.error('Error in PDF processing:', pdfError);
+                            reject(new Error(`PDF loading error: ${pdfError.message}`));
+                        }
                     } catch (error) {
                         console.error('Error processing PDF:', error);
                         reject(new Error(`PDF processing error: ${error.message}`));
                     }
                 };
                 
-                reader.onerror = () => {
+                reader.onerror = (error) => {
+                    console.error('FileReader error:', error);
                     reject(new Error('Failed to read the PDF file'));
                 };
                 
                 // Read the file as an array buffer
                 reader.readAsArrayBuffer(file);
+                console.log('FileReader started for PDF');
                 
             } catch (error) {
+                console.error('General PDF parsing error:', error);
                 reject(new Error(`PDF parsing failed: ${error.message}`));
             }
         });
@@ -66,20 +85,30 @@ const PDFHandler = (() => {
     const extractTablesFromPDF = async (pdf) => {
         const allItems = [];
         
+        console.log(`Starting to extract tables from PDF with ${pdf.numPages} pages`);
+        
         // Process each page
         for (let i = 1; i <= pdf.numPages; i++) {
             try {
+                console.log(`Processing page ${i}`);
                 const page = await pdf.getPage(i);
                 const textContent = await page.getTextContent();
                 
+                console.log(`Page ${i} text content retrieved, items: ${textContent.items.length}`);
+                
                 // Extract table data from text content
                 const pageItems = extractItemsFromTextContent(textContent, i);
-                allItems.push(...pageItems);
+                console.log(`Page ${i} extracted items: ${pageItems.length}`);
+                
+                if (pageItems.length > 0) {
+                    allItems.push(...pageItems);
+                }
             } catch (error) {
                 console.warn(`Error extracting content from page ${i}:`, error);
             }
         }
         
+        console.log(`Total extracted items from all pages: ${allItems.length}`);
         return allItems;
     };
 
@@ -96,67 +125,111 @@ const PDFHandler = (() => {
         // Get text items and their positions
         const textItems = textContent.items;
         
+        console.log(`Extracting from ${textItems.length} text items on page ${pageNum}`);
+        
+        // Collect some sample items for debugging
+        if (textItems.length > 0) {
+            const samples = textItems.slice(0, Math.min(5, textItems.length));
+            console.log('Sample text items:', samples.map(item => `"${item.str}" at (${item.transform[4]},${item.transform[5]})`));
+        }
+        
         // Group text items by their y-coordinates to identify rows
         const rows = groupTextItemsByRows(textItems);
+        console.log(`Grouped into ${rows.length} rows`);
         
         // Process rows to identify headers and data
         let headerRow = null;
+        let headerRowIndex = -1;
         let itemNumberIndex = -1;
         let descriptionIndex = -1;
         let quantityIndex = -1;
         let unitIndex = -1;
         
-        // Process rows to find potential header and data rows
-        rows.forEach(row => {
+        // First, try to find the header row with column names
+        rows.forEach((row, rowIndex) => {
             const text = row.map(item => item.str.trim());
             const joinedText = text.join(' ').toLowerCase();
             
+            console.log(`Row ${rowIndex} text: "${joinedText}"`);
+            
             // Look for header row containing key columns
-            if (joinedText.includes('item') && 
-                (joinedText.includes('description') || joinedText.includes('desc')) && 
-                (joinedText.includes('quantity') || joinedText.includes('qty'))) {
+            // LA DOTD typically uses "ITEM NO.", "DESCRIPTION", "UNIT", "QUANTITY"
+            if ((joinedText.includes('item') || joinedText.includes('item no')) && 
+                joinedText.includes('description') && 
+                joinedText.includes('unit') &&
+                joinedText.includes('quantity')) {
                 
+                console.log(`Found header row at index ${rowIndex}: ${joinedText}`);
                 headerRow = row;
+                headerRowIndex = rowIndex;
                 
-                // Determine column indexes
+                // Determine column indexes - LA DOTD format
                 text.forEach((item, index) => {
                     const lowerItem = item.toLowerCase();
-                    if (lowerItem.includes('item')) itemNumberIndex = index;
-                    if (lowerItem.includes('desc')) descriptionIndex = index;
-                    if (lowerItem.includes('quant')) quantityIndex = index;
-                    if (lowerItem.includes('unit')) unitIndex = index;
+                    if (lowerItem.includes('item') || lowerItem === 'item no.') itemNumberIndex = index;
+                    if (lowerItem.includes('description')) descriptionIndex = index;
+                    if (lowerItem === 'unit') unitIndex = index;
+                    if (lowerItem === 'quantity') quantityIndex = index;
                 });
-            } 
-            // If we've already found a header, process data rows
-            else if (headerRow && row.length >= 2) {
-                // Check if the first column looks like an item number
-                const potentialItemNumber = text[0];
-                if (isValidItemNumber(potentialItemNumber)) {
-                    // Create an item object
+                
+                console.log(`Column indexes - Item: ${itemNumberIndex}, Desc: ${descriptionIndex}, Unit: ${unitIndex}, Qty: ${quantityIndex}`);
+            }
+        });
+        
+        // If header row was found, process data rows (everything after the header)
+        if (headerRow && headerRowIndex >= 0) {
+            console.log('Processing data rows after header');
+            
+            for (let i = headerRowIndex + 1; i < rows.length; i++) {
+                const row = rows[i];
+                const text = row.map(item => item.str.trim());
+                
+                // Skip rows that are too short
+                if (text.length < 2) continue;
+                
+                // Look for LA DOTD item number pattern in the first column
+                const potentialItemNumber = text[itemNumberIndex >= 0 ? itemNumberIndex : 0];
+                
+                // LA DOTD item numbers are typically in format like "201-01-00100"
+                if (potentialItemNumber && isValidItemNumber(potentialItemNumber)) {
+                    console.log(`Found item row with item number: ${potentialItemNumber}`);
+                    
+                    // Make sure we have all the necessary column indexes
+                    const descIndex = descriptionIndex >= 0 ? descriptionIndex : 1;
+                    const unitIdx = unitIndex >= 0 ? unitIndex : 2;
+                    const qtyIdx = quantityIndex >= 0 ? quantityIndex : 3;
+                    
+                    // Create an item object with the data from the row
                     const item = {
                         itemNumber: text[itemNumberIndex >= 0 ? itemNumberIndex : 0] || '',
-                        description: text[descriptionIndex >= 0 ? descriptionIndex : 1] || '',
-                        quantity: text[quantityIndex >= 0 ? quantityIndex : 2] || '',
-                        unit: text[unitIndex >= 0 ? unitIndex : 3] || ''
+                        description: text.length > descIndex ? text[descIndex] : '',
+                        unit: text.length > unitIdx ? text[unitIdx] : '',
+                        quantity: text.length > qtyIdx ? text[qtyIdx] : ''
                     };
                     
                     items.push(item);
                 }
             }
-        });
-        
-        // If we couldn't identify a header row, make a best effort to extract items
-        if (items.length === 0) {
-            rows.forEach(row => {
+        } else {
+            console.log('Header row not found, attempting alternative extraction');
+            
+            // If we couldn't find a proper header row, try to extract items based on item number pattern
+            rows.forEach((row, index) => {
                 const text = row.map(item => item.str.trim());
                 
-                // Check if the first column looks like an item number
-                if (text.length >= 2 && isValidItemNumber(text[0])) {
+                // Skip rows that are too short
+                if (text.length < 2) return;
+                
+                // Check first column for item number pattern
+                if (isValidItemNumber(text[0])) {
+                    console.log(`Found potential item row by pattern matching: ${text[0]}`);
+                    
+                    // Create an item with best-effort column mapping
                     const item = {
                         itemNumber: text[0] || '',
                         description: text.length > 1 ? text[1] : '',
-                        quantity: text.length > 2 ? text[2] : '',
-                        unit: text.length > 3 ? text[3] : ''
+                        unit: text.length > 2 ? text[2] : '',
+                        quantity: text.length > 3 ? text[3] : ''
                     };
                     
                     items.push(item);
@@ -164,6 +237,7 @@ const PDFHandler = (() => {
             });
         }
         
+        console.log(`Extracted ${items.length} items from page ${pageNum}`);
         return items;
     };
 
@@ -173,9 +247,57 @@ const PDFHandler = (() => {
      * @returns {Array} - Array of rows, each containing text items
      */
     const groupTextItemsByRows = (textItems) => {
+        if (!textItems || textItems.length === 0) {
+            console.log('No text items to group into rows');
+            return [];
+        }
+        
+        console.log(`Grouping ${textItems.length} text items into rows`);
+        
+        // First, analyze the y-coordinates to determine the typical line height
+        const yCoords = textItems.map(item => item.transform[5]);
+        const sortedY = [...yCoords].sort((a, b) => a - b);
+        
+        // Calculate the differences between consecutive y-coordinates
+        const diffs = [];
+        for (let i = 1; i < sortedY.length; i++) {
+            const diff = Math.abs(sortedY[i] - sortedY[i-1]);
+            if (diff > 0.1) { // Ignore very small differences
+                diffs.push(diff);
+            }
+        }
+        
+        // Find the most common small difference (likely the line height)
+        let lineHeightTolerance = 3; // Default tolerance
+        
+        if (diffs.length > 0) {
+            // Group similar differences
+            const diffGroups = {};
+            diffs.forEach(diff => {
+                // Round to nearest 0.5 to group similar values
+                const roundedDiff = Math.round(diff * 2) / 2;
+                diffGroups[roundedDiff] = (diffGroups[roundedDiff] || 0) + 1;
+            });
+            
+            // Find the most common difference
+            let maxCount = 0;
+            let mostCommonDiff = 3;
+            
+            Object.entries(diffGroups).forEach(([diff, count]) => {
+                if (count > maxCount && parseFloat(diff) < 20) { // Avoid outliers
+                    maxCount = count;
+                    mostCommonDiff = parseFloat(diff);
+                }
+            });
+            
+            // Use this as the line height tolerance, with a minimum value
+            lineHeightTolerance = Math.max(mostCommonDiff * 1.2, 2);
+            console.log(`Calculated line height tolerance: ${lineHeightTolerance}`);
+        }
+        
         // Sort items by y-coordinate first, then by x-coordinate
         const sortedItems = [...textItems].sort((a, b) => {
-            if (Math.abs(a.transform[5] - b.transform[5]) <= 3) {
+            if (Math.abs(a.transform[5] - b.transform[5]) <= lineHeightTolerance) {
                 // If y-coordinates are close (same row), sort by x-coordinate (left to right)
                 return a.transform[4] - b.transform[4];
             }
@@ -194,7 +316,7 @@ const PDFHandler = (() => {
             if (lastY === null) {
                 // First item
                 currentRow = [item];
-            } else if (Math.abs(y - lastY) <= 3) {
+            } else if (Math.abs(y - lastY) <= lineHeightTolerance) {
                 // Same row (y-coordinates within tolerance)
                 currentRow.push(item);
             } else {
@@ -213,6 +335,15 @@ const PDFHandler = (() => {
             rows.push(currentRow);
         }
         
+        console.log(`Grouped into ${rows.length} rows`);
+        
+        // Log some sample rows for debugging
+        if (rows.length > 0) {
+            const sampleRowIndex = Math.min(rows.length - 1, 10); // Get the 10th row if available
+            const sampleRow = rows[sampleRowIndex];
+            console.log(`Sample row ${sampleRowIndex}: "${sampleRow.map(item => item.str).join(' ')}"`);
+        }
+        
         return rows;
     };
 
@@ -224,12 +355,37 @@ const PDFHandler = (() => {
     const isValidItemNumber = (str) => {
         if (!str) return false;
         
-        // Check common LA DOTD item number patterns
-        // Examples: 203-01, 701-01-00100, etc.
-        const itemNumberPattern = /^\d{3}-\d{2}(-\d{5})?$/;
-        return itemNumberPattern.test(str) || 
-               /^\d{3}-\d{2}$/.test(str) || 
-               /^\d{3}-\d{2}-\d+$/.test(str);
+        console.log(`Checking if "${str}" is a valid item number`);
+        
+        // LA DOTD item number patterns can vary
+        // Common formats:
+        // 201-01-00100
+        // 201-01
+        // 732-01-00200
+        // 805-12-00100
+        
+        // Check for standard patterns
+        const standardPattern = /^\d{3}-\d{2}(-\d{5})?$/;
+        
+        // Check for other patterns seen in your document
+        const altPattern1 = /^\d{3}-\d{2}-\d{5}$/;
+        const altPattern2 = /^\d{3}-\d{2}-\d{4}$/;
+        const altPattern3 = /^\d{3}-\d{2}-\d{3}$/;
+        const altPattern4 = /^\d{3}-\d{2}$/;
+        
+        // Additional pattern seen in the provided document
+        const altPattern5 = /^\d{3}-\d{2}-\d{2}$/;
+        
+        // Check if any pattern matches
+        const result = standardPattern.test(str) || 
+                       altPattern1.test(str) || 
+                       altPattern2.test(str) ||
+                       altPattern3.test(str) ||
+                       altPattern4.test(str) ||
+                       altPattern5.test(str);
+        
+        console.log(`Item number check result for "${str}": ${result}`);
+        return result;
     };
 
     /**
