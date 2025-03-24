@@ -1,5 +1,5 @@
 /**
- * LA DOTD Specification Manager - Utilities Module
+ * Specification Manager - Utilities Module
  * 
  * This module provides common utility functions used throughout the application.
  */
@@ -119,6 +119,18 @@ const Utils = (() => {
         return filename.split('.').pop().toLowerCase();
     };
 
+    /**
+     * Log debug information to the console
+     * @param {string} message - Debug message
+     * @param {any} data - Optional data to log
+     */
+    const debug = (message, data) => {
+        console.log(`[DEBUG] ${message}`);
+        if (data !== undefined) {
+            console.log(data);
+        }
+    };
+
     // Return public methods
     return {
         escapeHtml,
@@ -128,6 +140,7 @@ const Utils = (() => {
         toTitleCase,
         formatNumber,
         isValidJSON,
-        getFileExtension
+        getFileExtension,
+        debug
     };
 })();
